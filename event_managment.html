@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Liberty Event Management</title>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+    <script src="https://use.fontawesome.com/6c2c8c3c30.js"></script>
+    <script type="text/javascript" src="//cdn.worldsecuresystems.com/bcapi/bcapi-0.1.0.min.js"></script>
+    <meta name="robots" content="noindex" />
+    <style>
+    table th {
+        padding: 5px;
+        text-align: left;
+        border: 1px solid black;
+    }
+    
+    table td {
+        padding: 2px;
+        border: 1px solid black;
+    }
+    
+    table {
+        border-collapse: collapse;
+    }
+    </style>
+</head>
+
+<body>
+    <script>
+    function update() {
+        $('#statusHint').text('')
+        $("#failHint").text('')
+        $('#myProgress').show();
+        if (!$('#event_duration_hours').val() || !$('#event_duration_min').val() || !$('#event_point').val() || !$('#event_provider').val() || !$('#event_completDate').val()) {
+            alert('Please Enter Event Details')
+        } else {
+            var progressMax = 0;
+            var progressValue = 0;
+            $('.checkStatus').each(function(index) {
+                if ($(this).children(":first").is("input")) {
+                    if ($(this).children(":first").is(":checked")) {
+                        progressMax = progressMax + 1
+                    }
+                }
+            })
+            document.getElementById("myProgress").max = progressMax.toString();
+            /*loop all records in selected event, get the record need update*/
+            var stop = false;
+            if (progressMax > 30) {
+                alert("The maximumn excute case is 30, You current select " + progressMax + " items, please uncheck several items. Thank you")
+            } else {
+              $('.checkStatus').each(function(index) {
+                  if ($(this).children(":first").is("input")) {
+                      if ($(this).children(":first").is(":checked")) {
+                          var customerId = parseInt($(this).attr('id'));
+                          var subscriptionId = parseInt($('#subscriptionId' + customerId).html());
+                          /*customer fields*/
+                          var name = $('#customerName' + customerId).html();
+                          var email = $('#userEmail' + customerId).html();
+                          var cpd_Title = $("#cpd_title_custome").val();
+                          var completion_date = $('#event_completDate').val();
+                          var duration_hours = parseInt($('#event_duration_hours').val());
+                          var duration_minutes = $('#event_duration_min').val();
+                          var cpd_points = $('#event_point').val();
+                          var cpd_provider = $('#event_provider').val();
+                          var selfRecord = false;
+                          if ($('#event_selfRecord').is(":checked")) {
+                              selfRecord = true;
+                          }
+                          var comments = $('#event_comment').val();
+                          var eventName = name + " - " + $("#comboA option:selected").text() + " - " + completion_date;
+                          var dateJson = {
+                                  "name": eventName,
+                                  "enabled": true,
+                                  "submittedBy": customerId,
+                                  "fields": {
+                                      "Name": name,
+                                      "Email": email,
+                                      "CPD title": cpd_Title,
+                                      "Completion date": completion_date,
+                                      "Duration (hours)": duration_hours,
+                                      "Duration (minutes)": duration_minutes,
+                                      "CPD Points": cpd_points,
+                                      "CPD provider": cpd_provider,
+                                      "Self recorded": selfRecord,
+                                      "Comments": comments
+                                  }
+                              }
+                              /*ajax to update booking status*/
+                          $.ajax({
+                                  async: false,
+                                  url: "/webresources/api/v3/sites/current/booking-customer-relations/" + subscriptionId,
+                                  data: JSON.stringify({
+                                      "bookingStatusId": 1
+                                  }),
+                                  type: "PUT",
+                                  contentType: "application/json",
+                                  headers: {
+                                      "Authorization": BCAPI.Helper.Site.getAccessToken()
+                                  }
+                              }).done(function(data) {
+                                  progressValue = progressValue + 1;
+                                  document.getElementById("myProgress").value = progressValue.toString();
+                                  var progressPesent = (progressValue / progressMax) * 100
+                                  $("#progressPesent").text(progressPesent + " %")
+                                      // console.log("change booking status success");
+                                  var request = $.ajax({
+                                      async: false,
+                                      url: "/api/v2/admin/sites/current/webapps/CPD reporting/items",
+                                      type: "POST",
+                                      connection: "keep-alive",
+                                      contentType: "application/json",
+                                      headers: {
+                                          "Authorization": BCAPI.Helper.Site.getAccessToken()
+                                      },
+                                      processData: false,
+                                      data: JSON.stringify(dateJson)
+                                  });
+                                  request.done(function(msg) {
+
+                                      // $("#reportCreateHint").text(name +'record add into CPD report success')
+                                      if (progressValue == progressMax) {
+                                          $("#statusHint").text("Update Success!");
+                                          $('#myProgress').hide()
+                                          getComboA($("#comboA").val())
+                                      }
+
+                                      console.log('item add into CPD report')
+
+                                  })
+                                  request.fail(function(jqXHR) {
+                                      stop = true;
+                                      console.log("Request failed.");
+                                      console.log("Error code: " + jqXHR.status);
+                                      console.log("Error text: " + jqXHR.statusText);
+                                      console.log("Response text: " + jqXHR.responseText);
+                                      $("#failHint").text("Request failed: Error code" + jqXHR.status + "; Error text: " + jqXHR.statusText)
+
+                                  })
+
+                              }).fail(function(jqXHR) {
+                                  $("#failHint").text("Request failed: Error code" + jqXHR.status + "; Error text: " + jqXHR.statusText)
+                                  console.log("Request failed.");
+                                  console.log("Error code: " + jqXHR.status);
+                                  console.log("Error text: " + jqXHR.statusText);
+                                  console.log("Response text: " + jqXHR.responseText);
+                              })
+                              /*end ajax update booking status*/
+                      }
+                  }
+              });
+            }
+
+        }
+    }
+
+    /*get all subscribers details*/
+    function getComboA(bookingId) {
+        $("#event_details").empty();
+        var request = $.ajax({
+            url: "/webresources/api/v3/sites/current/booking-customer-relations?fields=subscriptionId,bookingId,customerId,deleted,bookingStatusId,createDate,lastUpdateDate,customer,booking,assignedUser,bookingStatus&skip=0&limit=500&order=customer.lastName&where={'booking.id':'" + bookingId + "'}",
+            type: "GET",
+            contentType: "application/json",
+            headers: {
+                "Authorization": BCAPI.Helper.Site.getAccessToken()
+            }
+        });
+        request.done(function(subscribers) {
+            $('#event_registrations').text(subscribers.totalItemsCount)
+            $.each(subscribers.items, function(index, subscriber) {
+                var userEmail = '';
+                /*get customer email request*/
+                $.ajax({
+                    url: "/webresources/api/v3/sites/current/customers?fields=id,email1,email2&skip=0&limit=10&order=id&where={'id':'" + subscriber.customerId + "'}",
+                    type: "GET",
+                    contentType: "application/json",
+                    headers: {
+                        "Authorization": BCAPI.Helper.Site.getAccessToken()
+                    }
+                }).done(function(customers) {
+                    if (customers.totalItemsCount === 1) {
+                        userEmail = customers.items[0].email1.value;
+                    }
+                    var rowDetails = "<td id='customerName" + subscriber.customerId + "'>" + subscriber.customer.firstName + " " + subscriber.customer.lastName + "</td><td id='userEmail" + subscriber.customerId + "'>" + userEmail + "</td><td id='customerId" + subscriber.customerId + "'>" + subscriber.customerId + "</td><td id='createDate" + subscriber.customerId + "'>" + subscriber.customer.createDate + "</td><td id='bookingStatus" + subscriber.customerId + "'>" + subscriber.bookingStatus.bookingStatus + "</td><td><a href=https://libertymed.worldsecuresystems.com/CRM/BookingDetails.aspx?EntityID=" + subscriber.customerId + "&EntityType=1001&SubscriptionID=" + subscriber.subscriptionId + " target=blank>View</a></td>"
+                    if (subscriber.bookingStatus.bookingStatus === "Success and Attended") {
+                        rowDetails = rowDetails + "<td class='checkStatus'><i class='fa fa-check' aria-hidden='true' style='color:green'></i></td>"
+                    } else {
+                        rowDetails = rowDetails + "<td  class='checkStatus' id='" + subscriber.customerId + "'><input type='checkbox'></td><td style='display:none' id='subscriptionId" + subscriber.customerId + "'>" + subscriber.subscriptionId + "</td>"
+                    }
+                    $("#event_details").append($("<tr/>").append(rowDetails));
+
+                }).fail(function(jqXHR) {
+                    console.log("Request failed.");
+                    console.log("Error code: " + jqXHR.status);
+                    console.log("Error text: " + jqXHR.statusText);
+                    console.log("Response text: " + jqXHR.responseText);
+                })
+            });
+            /*end get customer request*/
+        })
+        request.fail(function(jqXHR) {
+            console.log("Request failed.");
+            console.log("Error code: " + jqXHR.status);
+            console.log("Error text: " + jqXHR.statusText);
+            console.log("Response text: " + jqXHR.responseText);
+        })
+    }
+    </script>
+    <h2>Liberty Event management</h2>
+    <p>Select Event: {module_data resource="bookings" version="v3" fields="id,siteId,name,body,date,capacity,hideWhenFull,disabled,deleted,requiresPayment,createDate,lastUpdateDate" skip="0" limit="100" order="-id" collection="events"}
+        <select id="comboA" onchange="getComboA($(this).val())">
+            <option value="">Select event</option>
+            {% for item in events.items %}
+            <option value="{{item.id}}">{{item.name}}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <br>
+    <h2 id="event-selected">Event registrations:</h2>
+    <p>Number registered: <span id="event_registrations"></span></p>
+    <p>CPD Title:
+        <input type="text" id="cpd_title_custome" />
+    </p>
+    <p>Duration (hours):
+        <input type="number" id='event_duration_hours' /> </p>
+    <p>Duration (minutes):
+        <select name="" id="event_duration_min">
+            <option value="0">0</option>
+            <option value="15">15</option>
+            <option value="15">30</option>
+            <option value="45">45</option>
+        </select>
+    </p>
+    <p>CPD points:
+        <input type="text" id="event_point" />
+    </p>
+    <p>CPD provider:
+        <input type="text" id='event_provider' />
+    </p>
+    <p>Self Recorded
+        <input type="checkbox" id="event_selfRecord" />
+    </p>
+    <p>Completion date:
+        <input type="date" id='event_completDate' />
+    </p>
+    <p>Default learning notes:
+        <textarea rows="4" cols="50" id="event_comment"></textarea>
+    </p>
+    <p style="color:red">Note: This event management app will update the attennd status and create a new event item at the same time. Just need to make sure do the following steps correctly:<br>
+    1. fill the event detail information form above<br>
+    2. tick attend boxs on the belowing table<br>
+    3. click the "Update Booking" button (this will update the attend status and create new event item)</p>
+    <button onclick="update()">Update Booking</button>
+    <progress id="myProgress" value='' max='100' style='display: none'>
+    </progress> <span id="progressPesent"></span>
+    <p id="statusHint" style="color: green;"></p>
+    <p id="failHint" style="color: red;"></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Customer Name</th>
+                <th>Email</th>
+                <th>Customer ID</th>
+                <th>Date Registered</th>
+                <th>Booking Status</th>
+                <th>View Details</th>
+                <th>Attended?</th>
+            </tr>
+        </thead>
+        <tbody id='event_details'>
+        </tbody>
+    </table>
+</body>
+
+</html>
