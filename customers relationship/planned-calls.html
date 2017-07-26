@@ -1,0 +1,52 @@
+<html><!-- InstanceBegin template="/Templates/[Template] – STAFF Inner page blank.dwt" codeOutsideHTMLIsLocked="false" -->
+
+    <head>
+    </head>
+
+    <body>{module_contentholder,name="[Template]_Head Styles and Scripts"}
+        <!-- InstanceBeginEditable name="doctitle" --><title>Rick's planned calls</title><!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+        
+    <meta name="robots" content="noindex" />
+<!-- InstanceEndEditable -->
+        <div class="main-background">
+            <!-- HEADER -->
+            <!--<header>         {module_contentholder,name="[Template]_Logo Utility Bar"}         <div class="main-nav"> <div class="row"> <div class="contain-to-grid sticky"> <nav class="top-bar" role="navigation" data-topbar="data-topbar" data-options="sticky_on: large"> <ul class="title-area"> <li class="name"><a href="/index">Home</a><a href="{module_pageaddress}">{module_pagename}</a></li> <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li> </ul> </nav> </div> </div> </div> </header>-->
+            <!-- END -->
+            <!-- MIDDLE -->
+            <div class="row">{module_contentholder name="[Content]_Header Scripts - STAFF"}</div>
+            <div class="row"> <!-- InstanceBeginEditable name="ContentArea" -->
+<h2>Rick's Planned Calls</h2>
+	<table>
+            <tr>
+                <th>Customer</th>
+                <th>Call title</th>
+                <th>Call notes</th>
+                <th>Date</th>
+                <th>Edit Call</th>
+            </tr>
+        {module_data resource="tasks" version="v3" fields="id,objectId,name,description,startDate" skip="0" limit="500" where="\{'taskStatusType.statusType':'Planned'\}" order="startDate" collection="calls"}
+        {% for item in calls.items %}
+            <tr>
+                <td>
+{module_data resource="customers" version="v3" fields="id,firstName,lastName" skip="0" limit="10" where="\{'id':'{{item.objectId}}'\}" order="id" collection="names"}
+        {% for item in names.items %}
+        {{item.firstName}}&nbsp;{{item.lastName}}
+        {% endfor %}
+        </td>
+                <td>{{item.name}}</td>
+                <td>{{item.description}}</td>
+                <td>{{item.startDate|date}}</td>
+                <td><a href="https://emergehealth.worldsecuresystems.com/CRM/SummaryDetails.aspx?EntityID={{item.objectId}}&EntityType=1001">Edit Call</a></td>
+            </tr>
+        {% endfor %}
+        </table>
+
+    <!-- InstanceEndEditable --></div>
+            <!-- END -->
+            <!-- module_contentholder,name="[Template]_Footer" -->
+        </div>
+        <p> {module_contentholder,name="[Template]_Footer Scripts"}</p>
+        <p>{module_contentholder name="[Template]_Footer Scripts - STAFF"}</p>
+    </body>
+
+<!-- InstanceEnd --></html>

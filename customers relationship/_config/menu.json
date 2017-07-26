@@ -1,0 +1,18 @@
+{
+  "menu-bc-crm-nex2": {
+      "parent": "menu-customers",
+        "weight": 20000,
+        "title": "Add/Edit Customer",
+        "attr": {
+      "href": "/customers.html"
+    }
+   },
+   "menu-bc-crm-nex3": {
+      "parent": "menu-customers",
+        "weight": 10000,
+        "title": "CRM Home",
+        "attr" : {
+            "href" : "/search.html"
+        }
+   }
+}

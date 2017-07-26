@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Call Recording</title>
+        <meta name="description" content="" />
+        
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <!-- jQuery Version 1.11.0 -->
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+    <script type="text/javascript" src="https://cdn.worldsecuresystems.com/bcapi/bcapi-0.1.0.min.js"></script>
+        <script type="text/javascript" src="js/addCall.js?v=2.1"></script>
+    </head>
+    <script>
+                        function onload(){
+                            document.getElementById('CAT_Custom_3').value = dateFormate(new Date());
+                            document.getElementById('currentTime').innerHTML = timeFormate(new Date());
+
+                            if (document.getElementById("CAT_Custom_6").value == "") {
+                                alert("Head office must update 'Customer Type' before a call can be entered.");
+                            }
+                        }
+
+                        function dateFormate(date) {
+                            var today = date.toString().split(" ");
+                            var newdate = today[2] + "-" + today[1] + "-" + today[3];
+                            return newdate;
+                        }
+
+                        function timeFormate(date) {
+                            var today = date.toString().split(" ");
+                            var time = today[4].split(":")
+                            var newTime = time[0]+":"+time[1];
+                            return newTime;
+                        }
+
+                    function getcustomerDetails(){
+                        var e = document.getElementById("CustomerID");
+                        var customerDetails = e.options[e.selectedIndex].value;
+                        if(customerDetails == "default"){
+                                document.getElementById("CAT_Custom_16").setAttribute("value","");
+                                document.getElementById("CAT_Custom_15").setAttribute("value","");
+                                document.getElementById("CAT_Custom_14").setAttribute("value","");
+                                document.getElementById("CAT_Custom_4").setAttribute("value","");
+                                document.getElementById("CAT_Custom_5").setAttribute("value","");
+                                document.getElementById("CAT_Custom_6").setAttribute("value","");
+                                document.getElementById("CAT_Custom_17").setAttribute("value","");
+                        }else{
+                                var customerDetailsArray = customerDetails.split("|");
+                                console.log("...."+customerDetailsArray[0]);
+                                document.getElementById("CAT_Custom_16").setAttribute("value",customerDetailsArray[0]);
+                                document.getElementById("CAT_Custom_15").setAttribute("value",customerDetailsArray[1]);
+                                document.getElementById("CAT_Custom_14").setAttribute("value",customerDetailsArray[2]);
+                                document.getElementById("CAT_Custom_4").setAttribute("value",customerDetailsArray[3]);
+                                document.getElementById("CAT_Custom_5").setAttribute("value",customerDetailsArray[4]);
+                                document.getElementById("CAT_Custom_6").setAttribute("value",customerDetailsArray[5]);
+                                document.getElementById("CAT_Custom_17").setAttribute("value",customerDetailsArray[6]);
+                            console.log("id"+  document.getElementById("CAT_Custom_16").value);
+                           }
+                    }
+
+        </script>
+    <body onload="onload()">
+<!--         <button onclick='test()'>test</button> -->
+        <div class="center-content col-md-12" style="padding-top:20px">
+{{this.globals.get.customer}}{{globals.user.isLoggedIn}}
+ {module_defaulturl collection="defaulturl" template=""}
+        {% if {{globals.user.isLoggedIn}} == "false" %}
+            <div class="secure-login">
+        <h3>SECURE ZONE LOGIN</h3>
+
+        <form name="catseczoneform52069" onsubmit="return checkWholeForm52069(this)" method="post" action="{module_secureurl}/ZoneProcess.aspx?ZoneID=-1&Referrer={module_siteUrl,true,true}&OID={module_oid}&OTYPE={module_otype}&PageID=/_System/apps/thrivase-emerge-customers/customers.html">
+            <div class="form">
+                <div class="item">
+                    <label for="SZUsername">Username</label>
+                    <br/>
+                    <input class="cat_textbox_small" type="text" name="Username" id="SZUsername" maxlength="255" />
+                </div>
+                <div class="item">
+                    <label for="SZPassword">Password</label>
+                    <br />
+                    <input class="cat_textbox_small" type="password" name="Password" id="SZPassword" maxlength="255" autocomplete="off" />
+                </div>
+                <div class="item">
+                    <input type="checkbox" name="RememberMe" id="RememberMe" />
+                    <label for="RememberMe">Remember Me</label>
+                </div>
+                <div class="item">
+                    
+                    <input class="cat_button" type="submit" value="Log in"/>&nbsp;<a href="/_System/SystemPages/PasswordRetrieveRequest">Lost password?</a>
+                </div>
+            </div>
+            <script type="text/javascript" src="/CatalystScripts/ValidationFunctions.js?vs=b2024.r490259-phase1"></script>
+            <script type="text/javascript">
+                //<![CDATA[
+                function checkWholeForm52069(theForm) {
+                    var why = "";
+                    if (theForm.Username) why += isEmpty(theForm.Username.value, "Username");
+                    if (theForm.Password) why += isEmpty(theForm.Password.value, "Password");
+                    if (why != "") {
+                        alert(why);
+                        return false;
+                    }
+                    theForm.submit();
+                    return false;
+                }
+                //]]>
+            </script>
+        </form>
+        </div>
+        {% endif %}
+{module_data resource="customers" resourceId="{{this.globals.get.customer}}" version="v3" fields="id,firstName,lastName,titleType,customerTypeId,ratingTypeId,company" skip="0" limit="1" order="lastName" collection="customer-data"}
+    <h4>Enter Call Notes for {{customer-data.titleType.label}} {{customer-data.firstName}} {{customer-data.lastName}}</h4>
+        <form name="catcustomcontentform18454" onsubmit="return checkWholeForm18454(this)" enctype="multipart/form-data" method="post" action="/CustomContentProcess.aspx?CCID=28227&amp;OID={module_oid}&amp;OTYPE={module_otype}&PageID=/staff/main">
+            <input class="cat_textbox_small" type="hidden" name="ItemName" id="ItemName" maxlength="255" value="{module_firstname}-{{Globals.Site.DateNow}}">
+            <!--id--> <input type="hidden" maxlength="4000" name="CAT_Custom_16" id="CAT_Custom_16" class="cat_textbox" value="{{customer-data.id}}">
+            <!--title type--> <input type="hidden" maxlength="4000" name="CAT_Custom_15" id="CAT_Custom_15" class="cat_textbox" value="{{customer-data.titleType.label}}">
+            <!--first name--> <input type="hidden" maxlength="4000" name="CAT_Custom_14" id="CAT_Custom_14" class="cat_textbox" value="{{customer-data.firstName}}">
+            <!--last name--> <input type="hidden" maxlength="4000" name="CAT_Custom_4" id="CAT_Custom_4" class="cat_textbox" value="{{customer-data.lastName}}">
+           <table class="webform" id="callnotes" cellspacing="0" cellpadding="2" border="0">
+
+                    <tr>
+                        <th><label for="CAT_Custom_5">Account name*</label></th>
+                        <td><input type="text" name="CAT_Custom_5" id="CAT_Custom_5" class="cat_textbox" value="{{customer-data.company}}" readonly="readonly"></td>
+                    </tr>
+               <tr>
+                        <th><label for="CAT_Custom_6">Customer Type*</label></th>
+                            {%if {{customer-data.customerTypeId}} != 0 %}{module_data resource="customertypes" version="v3" fields="id,label" where="\{'id':'{{customer-data.customerTypeId}}'\}" skip="0" limit="1" order="id" collection="customer-type"}
+                            {% for item in customer-type.items %}
+                            <td><input type="text" maxlength="4000" name="CAT_Custom_6" id="CAT_Custom_6" class="cat_textbox" value="{{item.label}}" readonly="readonly"></td>
+                            {% endfor %}
+                            {% else %}
+                            <td><input type="text" maxlength="4000" name="CAT_Custom_6" id="CAT_Custom_6" class="cat_textbox" value="" readonly="readonly"></td>
+                            {%endif %}
+                    </tr>
+                    <tr>
+                            <th><label for="CAT_Custom_17">Priority</label></th>
+                            {%if {{customer-data.ratingTypeId}} != 0 %}{module_data resource="ratingtypes" version="v3" fields="id,label" where="\{'id':'{{customer-data.ratingTypeId}}'\}" skip="0" limit="1" order="id" collection="rating-type"}
+                            {% for item in rating-type.items %}             
+                            <td><input type="text" maxlength="4000" name="CAT_Custom_17" id="CAT_Custom_17" class="cat_textbox" value="{{item.label}}" readonly="readonly"> </td>
+                            {% endfor %}
+                            {% else %} 
+                            <td><input type="text" maxlength="4000" name="CAT_Custom_17" id="CAT_Custom_17" class="cat_textbox" value="" readonly="readonly"> </td>              
+                            {%endif %}
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="CAT_Custom_3">Date / time *</label></th>
+                           <td> <input type="text" name="CAT_Custom_3" id="CAT_Custom_3" class="cat_textbox" readonly="readonly" style="background-color:#F0F0F0;" onfocus="displayDatePicker('CAT_Custom_3');return false;">
+                            <select id="CAT_Custom_13" name="CAT_Custom_13" class="cat_textbox" style="background-color:#F0F0F0;">
+                                <option id="currentTime" selected="selected"></option>
+                                <option>08:00</option>
+                                <option>08:15</option>
+                                <option>08:30</option>
+                                <option>08:45</option>
+                                <option>09:00</option>
+                                <option>09:15</option>
+                                <option>09:30</option>
+                                <option>09:45</option>
+                                <option>10:00</option>
+                                <option>10:15</option>
+                                <option>10:30</option>
+                                <option>10:45</option>
+                                <option>11:00</option>
+                                <option>11:15</option>
+                                <option>11:30</option>
+                                <option>11:45</option>
+                                <option>12:00</option>
+                                <option>12:15</option>
+                                <option>12:30</option>
+                                <option>12:45</option>
+                                <option>13:00</option>
+                                <option>13:15</option>
+                                <option>13:30</option>
+                                <option>13:45</option>
+                                <option>14:00</option>
+                                <option>14:15</option>
+                                <option>14:30</option>
+                                <option>14:45</option>
+                                <option>15:00</option>
+                                <option>15:15</option>
+                                <option>15:30</option>
+                                <option>15:45</option>
+                                <option>16:00</option>
+                                <option>16:15</option>
+                                <option>16:30</option>
+                                <option>16:45</option>
+                                <option>17:00</option>
+                                <option>17:15</option>
+                                <option>17:30</option>
+                                <option>17:45</option>
+                                <option>18:00</option>
+                              </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label>Products Detailed</label></th>
+                        <td>
+                            <input type="checkbox" name="CAT_Custom_1" id="CAT_Custom_1_0" value="Cystadane">Cystadane<br />
+                            <input type="checkbox" name="CAT_Custom_2" id="CAT_Custom_2_0" value="Carbaglu">Carbaglu<br />
+                            <input type="checkbox" name="CAT_Custom_8" id="CAT_Custom_8_0" value="Yes">Normosang<br />
+                            <input type="checkbox" name="CAT_Custom_9" id="CAT_Custom_9_0" value="Curosurf">Curosurf<br />
+                            <input type="checkbox" name="CAT_Custom_10" id="CAT_Custom_10_0" value="Neoprofen">Neoprofen<br />
+                            <input type="checkbox" name="CAT_Custom_11" id="CAT_Custom_11_0" value="SAS medicines">SAS medicines </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="CAT_Custom_18">Curosurf - Attitude to Brand </label>
+                        </th>
+                          <td>  <select name="CAT_Custom_18" id="CAT_Custom_18" class="cat_dropdown">
+                                <option value=" ">-- Please select --</option>
+                                <option value="Advocate 200mg per 1kg">Advocate 200mg per 1kg</option>
+                                <option value="User 200mg per 1kg">User 200mg per 1kg</option>
+                                <option value="Occassional user/sharer">Occassional user/sharer</option>
+                                <option value="Non-prescribing influencer">Non-prescribing influencer</option>
+                                <option value="Non-User">Non-User</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="CAT_Custom_7">Call Type *</label>
+                        </th>
+                        <td>
+                            <select name="CAT_Custom_7" id="CAT_Custom_7" class="cat_dropdown">
+                                <option value=" ">-- Please select --</option>
+                                <option value="Drop-in">Drop-in</option>
+                                <option value="Appointment">Appointment</option>
+                                <option value="Conference/Symposium">Conference/Symposium</option>
+                                <option value="In-service">In-service</option>
+                                <option value="Phone">Phone</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="ItemDescription">Call notes</label></th>
+                        <td>
+                            <textarea name="ItemDescription" id="ItemDescription" cols="100" rows="10" class="cat_listbox" text=""></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="padding-right: 15px;">
+                            <label for="CAT_Custom_19">Medical Information Request</label>
+                        </th>
+                        <td>
+                            <input type="checkbox" name="CAT_Custom_19" id="CAT_Custom_19" value="1" style="margin-bottom:0px;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <label for="CAT_Custom_12">Staff member * </label>
+                        </th>
+                        <td>
+                            <input type="text" readonly="readonly" maxlength="4000" name="CAT_Custom_12" id="CAT_Custom_12" class="cat_textbox" value="{module_fullname}"></td>
+                    </tr>
+                <br />
+                    <tr>
+
+                        <td colspan="2"><input class="cat_button" type="submit" value="Submit" id="catcustomcontentbutton"> </td>
+                    </tr>
+            </table>
+
+    </form>
+            <script type="text/javascript" src="/CatalystScripts/ValidationFunctions.js?vs=b1725.r465456-phase1"></script>
+            <script type="text/javascript" src="/CatalystScripts/Java_DatePicker.js?vs=b1725.r465456-phase1"></script>
+            <script type="text/javascript">
+                //<![CDATA[
+                var submitcount18454 = 0;
+
+                function checkWholeForm18454(theForm) {
+                        var why = "";
+                        if (theForm.ItemName) why += isEmpty(theForm.ItemName.value, "Item Name");
+                        if (theForm.CAT_Custom_4) why += isEmpty(theForm.CAT_Custom_4.value, "Customer name");
+                        if (theForm.CAT_Custom_5) why += isEmpty(theForm.CAT_Custom_5.value, "Account name");
+                        if (theForm.CAT_Custom_6) why += isEmpty(theForm.CAT_Custom_6.value, "Customer Type must be updated by head office before a call can be entered.");
+                        if (theForm.CAT_Custom_3) why += checkDate(theForm.CAT_Custom_3.value, "Date");
+                        if (theForm.CAT_Custom_7) why += checkDropdown(theForm.CAT_Custom_7.value, "Call Type");
+                        if (theForm.CAT_Custom_12) why += isEmpty(theForm.CAT_Custom_12.value, "Staff member");
+                        if (why != "") {
+                            alert(why);
+                            return false;
+                        }
+                        if (submitcount18454 == 0) {
+                            submitcount18454++;
+                            theForm.submit();
+                            return false;
+                        } else {
+                            alert("Form submission is in progress.");
+                            return false;
+                        }
+                    }
+                    //]]>
+            </script>
+        </div>
+    </body>
+</html>

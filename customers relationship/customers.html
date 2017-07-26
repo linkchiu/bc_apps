@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Customer API Demo</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+     <link rel="stylesheet" href="js/select2.min.css">
+    <style>
+  @media (min-height: 513px) {
+    #showCreateBox {
+          height: 457px;
+          overflow-y: auto;
+    }
+  }
+  
+  @media (min-height: 620px) {
+    #showCreateBox {
+          height: 564px;
+          overflow-y: auto;
+    }
+  }
+  
+  @media (min-height: 697px) {
+    #showCreateBox {
+          height: 641px;
+          overflow-y: auto;
+    }
+  }
+  
+  @media (min-height: 768px) {
+    #showCreateBox {
+          height: 712px;
+          overflow-y: auto;
+    }
+  } 
+  .select2{
+    width: 100%!important
+  }
+  </style>
+
+    <!-- jQuery Version 1.11.0 -->
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+    <script type="text/javascript" src="https://cdn.worldsecuresystems.com/bcapi/bcapi-0.1.0.min.js"></script>
+    <script type="text/javascript" src="js/select2.min.js"></script>
+    <script type="text/javascript" src="js/customer-rendering.js?v=5.0"></script>
+</head>
+
+<body>
+<!-- Page Content -->
+<div class="container-fluid">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="panel panel-default" style="margin-bottom: 0px">
+            <div class="panel-heading" id = "panelHeadingToAddAlert">
+                <div class="row">
+               
+                    <div class="col-xs-1" style="width: 3.333333%;"><br>
+                        <button type="button" class="btn btn-primary"  onclick="searchWithLimit(0,50)"><span class="glyphicon glyphicon-search"></span></button>
+                    </div>
+                    <div class="col-xs-2">
+                     Search by
+                        <input type="text" class="form-control col-xs-6" placeholder="customer name" id="simpleSearchField" onKeyUp="searchWithLimit(0,50)" onchange="searchWithLimit(0,50)"/>
+                    </div>
+                    <div class="col-xs-2">Order by
+                        <select class="form-control orderBy123" id="orderBy" onchange="searchWithLimit(0,50)">
+                            <option value = "firstName">First Name</option>
+                            <option value = "lastName">Last Name</option>
+                            <!-- <option value = "0">Create Time</option> -->
+                            <option value = "ratingTypeId">Priority</option>
+
+                        </select>
+                    </div>
+                    <div class="col-xs-3 pull-right" style="width: 6.333333%;">
+                    <br>
+                      <button type="button" class="btn btn-primary pull-right" onclick="$('#showCreateBox').fadeToggle(500);"><span class="glyphicon glyphicon-plus"></span>New Customer</button>
+                    </div>
+
+                    <div class="col-xs-3 pull-right" style="width: 15.333333%%;">
+                        <button type="button" class="btn btn-warning pull-right" style="display: none" id ="refreshButton" onclick="refresh()"><span class="glyphicon glyphicon-repeat"></span> Reset</button>
+                    </div>
+
+                    <div class="col-xs-3 pull-right" style="width: 3.333333%;">
+                        <button type="button" class="btn btn-success " style="display: none" id ="searchButton" onclick="searchWithLimit(0,50)"><span class="glyphicon glyphicon-ok-sign"></span> Start search</button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body" id="showCreateBox" style="display: none">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Add New Customer</div>
+                        <div class="panel-body">
+                          <form class="contact" name="contact">
+                            <div class="form-group col-sm-4" >
+                              <label for="title">Title</label>
+                              <select class="form-control" id="selectedTitleId"> 
+                                    <option value="1085413">Mr</option>
+                                    <option value="1085414">Mrs</option>
+                                    <option value="1085415">Ms</option>
+                                    <option value="1085416">Miss</option>
+                                    <option value="1085417">Dr</option>
+                                    <option value="1187742">Prof</option>
+                                    <option value="1190632">A/Prof</option>
+                              </select>
+                            </div>
+
+                            <div class="form-group col-sm-4">
+                              <label for="firstName">First Name</label>
+                              <input type="text" class="form-control" id="inputFirstName" placeholder="First Name">
+                            </div>
+                            <div class="form-group col-sm-4">
+                              <label for="firstName">Last Name</label>
+                              <input type="text" class="form-control" id="inputLastName" placeholder="Last Name">
+                            </div>
+                            
+                            <div class="form-group col-sm-4">
+                              <label for="exampleInputEmail1">Email address</label>
+                              <input type="email" class="form-control" id="inputEmail1" placeholder="Email" required>
+                            </div>
+                            
+                            <div class="form-group col-sm-4">
+                              <label for="">Priority</label>
+                              <select class="form-control" id="selectedRatingTypeId">
+                                  <option value="466005">1</option>
+                                  <option value="466006">2</option>
+                                  <option value="466008">3</option>
+                                  <option value="466009">4</option>
+                              </select>
+                            </div>
+
+                             <div class="form-group col-sm-4">
+                              <label for="">Therapy Area</label>
+                              <select class="form-control" id="selectedIndustry">
+                                  <option value="3990210">General Practice</option>
+                                  <option value="3990211">Metabolic Medicine</option>
+                                  <option value="3990212">Neonatology</option>
+                                  <option value="3990213">Pain Management</option>
+                                  <option value="3990214">Pharmacy - Hospital</option>
+                                  <option value="3990215">Pharmacy - Retail</option>
+                                  <option value="3990216">Pharmacy - SAS</option>
+                                  <option value="3990217">Paediatrics</option>
+                                  <option value="3990218">Gastroenterology</option>
+                                  <option value="3990219">Endocrinology</option>
+                                  <option value="3990220">Neurology</option>
+                                  <option value="3990221">Internal Medicine</option>
+                                  <option value="3990222">Emerge Health - staff/partners</option>
+                                  <option value="2699989">Other</option>
+                              </select>
+                            </div>                           
+ 
+                            <div class="form-group col-sm-4">
+                              <label for="">Customer Type</label>
+                                <select class="form-control" id="selectedCustomerTypeId"> </select>
+                            </div>
+
+                            <div class="form-group col-sm-4">
+                              <label>Phone Number</label>
+                              <input type="text" class="form-control" id="inputWorkPhone" placeholder="Work Phone">
+                            </div>
+                            <div class="form-group col-sm-4">
+                              <label for="">Country</label>
+                                <select class="form-control" id="newSelectedCountry">
+                                 <!-- <option value="0">----</option> -->
+                                <option value="AU">Australia</option>
+                                   <option value="NZ">New Zealand</option>
+                                </select>
+                            </div>
+                             <div class="form-group col-sm-4">
+                              <label for="">State</label>
+                                <select class="form-control" id="auStatesList">
+                                 <option value=""></option>
+                                     <option value="VIC">VIC</option>
+                                     <option value="NSW">NSW</option>
+                                     <option value="QLD">QLD</option>
+                                     <option value="WA">WA</option>
+                                     <option value="SA">SA</option>
+                                     <option value="TAS">TAS</option>
+                                     <option value="ACT">ACT</option>
+                                     <option value="NT">NT</option>                         
+                                </select>
+                                 <select class="form-control" id="nzStatesList" style="display: none">
+                                 <option value=""></option>
+                                     <option value="Northland">Northland</option>
+                                     <option value="Auckland">Auckland</option>
+                                     <option value="Waikato">Waikato</option>
+                                     <option value="Bay of Plenty">Bay of Plenty</option>
+                                     <option value="Gisborne">Gisborne</option>
+                                     <option value="Hawke's Bay">Hawke's Bay</option>
+                                     <option value="Taranaki">Taranaki</option>
+                                     <option value="Manawatu-Wanganui">Manawatu-Wanganui</option>     
+                                     <option value="Wellington">Wellington</option>
+                                     <option value="Tasman">Tasman</option>
+                                     <option value="Nelson">Nelson</option>
+                                     <option value="Marlborough">Marlborough</option>
+                                     <option value="West Coast">West Coast</option>
+                                     <option value="Canterbury">Canterbury</option>
+                                     <option value="Otago">Otago</option>
+                                     <option value="Southland">Southland</option>                                  
+                                </select>
+                            </div>
+            
+                            <div class="form-group col-sm-8" id="newRelationshipListField" style="display: none">
+                              <label for="">Hospital</label>
+                                <select class="form-control newselectedCompany" id="selectedCompany">
+                                    <option></option>
+                                </select>
+                            </div>
+                         <!--  <div class="form-group col-sm-1">
+                              <span class="glyphicon glyphicon-plus" onClick="newddRelationship(1)"></span>
+                          </div> -->
+                          </form>
+                          <div class="col-sm-12">
+                          <!-- <input type="button" class="btn btn-success" id="submit" value="Create"> -->
+                          <button id="submit" class="btn btn-success">Create</button>
+                          <a href="#" class="btn" onclick="$('#showCreateBox').fadeToggle(100);">Cancel</a>
+                        </div>
+                        </div>
+                    </div>
+            </div>
+    </nav>
+    <div class="row" style="height: 60px"></div>
+    <div class="panel panel-default">
+        <div class="panel-body" id= "mainContentPanelBody">
+            <table id = "main_content_table" class="table table-condensed" style="border-collapse:collapse;">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Customer name</th>
+                    <th>Email</th>
+                     <th>Therapy Area</th>
+                    <th>Customer Type</th>
+                     <th>State</th>
+                    <th>Priority</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div class = "row" style= "text-align:center" id="searchLoader">
+                <img src = "images/loading.gif">
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+    <div id="confirm" class="modal hide fade">
+        <div class="modal-body">
+            Are you sure?
+        </div>
+        <div class="modal-footer">
+            <button type="button" data-dismiss="modal" class="btn btn-primary" id="delete" onclick="">Delete</button>
+            <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+        </div>
+    </div>
+
+   <!-- <button type="button" onclick="$('#showCreateBox').fadeToggle(500);"><span class="glyphicon glyphicon-plus"></span>test for developer only</button> -->
+     <!--<button id="testUpdateAllRelationships">test Update All Relationships</button>
+           <button id="updateRelationship">update Relationship</button>
+          <button id="testAllRelationships">all relationships</button>
+          <button id="testAllRelationshipTypes">all relationship types</button>
+          <button id="addRelationship">add Relationship</button>  
+          <button id="testGetAllCustomers">all customers</button>
+          <button id="testUpdateAllCustomers">update all customers</button> -->
+           <!-- <button id="getIMSCustomers">IMS customers</button> -->
+	</div>
+</body>
+
+</html>
