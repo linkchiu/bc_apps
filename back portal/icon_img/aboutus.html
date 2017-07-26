@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+<link rel="stylesheet" href="css/style.css" type="text/css" />
+
+<script type="text/javascript" src="js/ddaccordion123.js"></script>
+<script type="text/javascript" src="js/ddaccordion.js">
+
+/***********************************************
+* Accordion Content script- (c) Dynamic Drive DHTML code library (www.dynamicdrive.com)
+* Visit http://www.dynamicDrive.com for hundreds of DHTML scripts
+* This notice must stay intact for legal use
+***********************************************/
+
+</script>
+
+<script type="text/javascript">
+
+//Initialize Arrow Side Menu:
+ddaccordion.init({
+	headerclass: "menuheaders", //Shared CSS class name of headers group
+	contentclass: "menucontents", //Shared CSS class name of contents group
+	revealtype: "clickgo", //Reveal content when user clicks or onmouseover the header? Valid value: "click", or "mouseover"
+	mouseoverdelay: 200, //if revealtype="mouseover", set delay in milliseconds before header expands onMouseover
+	collapseprev: true, //Collapse previous content (so only one open at any time)? true/false 
+	defaultexpanded: [0], //index of content(s) open by default [index1, index2, etc]. [] denotes no content.
+	onemustopen: false, //Specify whether at least one header should be open always (so never all headers closed)
+	animatedefault: false, //Should contents open by default be animated into view?
+	persiststate: true, //persist state of opened contents within browser session?
+	toggleclass: ["unselected", "selected"], //Two CSS classes to be applied to the header when it's collapsed and expanded, respectively ["class1", "class2"]
+	togglehtml: ["none", "", ""], //Additional HTML added to the header when it's collapsed and expanded, respectively  ["position", "html1", "html2"] (see docs)
+	animatespeed: 500, //speed of animation: integer in milliseconds (ie: 200), or keywords "fast", "normal", or "slow"
+	oninit:function(expandedindices){ //custom code to run when headers have initalized
+		//do nothing
+	},
+	onopenclose:function(header, index, state, isuseractivated){ //custom code to run whenever a header is opened or closed
+		//do nothing
+	}
+})
+
+</script>
+</head>
+
+<body>
+	
+    	
+    <div class="outer" id="main">
+            <div class="inner" >
+                <div class="header">
+                    <div class="header-menu">
+                        <ul>
+                            <li><a href="#">LOGOUT</a></li>
+                            <li><a href="#">MY ACCOUNT</a></li>
+                            <li><a href="#">MY CART</a></li>
+                        </ul>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="clear">
+                    </div>
+                </div>
+                <div class="container">
+                	<div class="left-sidebar">
+                    	<div class="logo-part">
+                        	<a href="index.html"><img src="images/logo.png" alt="" /></a>
+                        </div>
+                        <div class="menu-part">
+                        	<ul>
+                            	<li class="menuheaders"><p>Style & Features</p></li>
+                                	<ul class="menucontents">
+                                        <li><a href="#">Custom Suit</a></li>
+                                        <li><a href="product.html">Custom Shirts</a></li>
+									</ul>
+                                <li><a href="#">Upload your Design</a></li>
+                                <li><a href="gallery.html">Gallery</a></li>
+                                <li class="menuheaders"><p>About Us</p></li>
+                                	<ul class="menucontents">
+                                        <li><a href="aboutus.html">About Us </a></li>
+                                         <li><a href="#">Testimonial</a></li>
+                                         <li><a href="#">FAQ</a></li>
+									</ul>
+                                <li><a href="contact.html">Contact Us</a></li>
+                                <li><a href="#">Gift Card</a></li>
+                                <li><a href="#">Blog</a></li>
+                            </ul>
+                        </div>
+                        <div class="side-bar-footer">
+                        </div>
+                    </div>
+                    <div class="contain-part">
+                    	<img src="images/arl.png" alt="" class="arl-logo"/>
+                        <div class="contain-subpage">
+                            <div class="contain-inner">
+                                <h1>ABOUT US</h1>
+                                <div class="para-info">
+                                	<img src="images/about-logo.jpg" alt="" align="left" />
+                                    <p><span>A. Ralph Louis Custom Clothiers</span> offers fine tailored garments for men. We are morally driven; our core values are Honesty, Excellence, and Service. Our primary purpose is to influence men to wear tailor-made clothing. All suits are handcrafted and made especially for each individual. We use fabrics that are of the <span>highest quality </span>and made by some of the best fabric houses in the industry. We also produce fine shirts made from Egyptian cotton, one of the best in the world.  <br /><br />
+                                    A. Ralph Louis Custom Clothiers has a Passion for Elegance.  Our goal is to share our passion with men by designing custom clothing that will exceed their expectation.  We believe every man has a desire to wear the finest clothing the fashion market has to offer.  We are committed to assist every man to obtain his desire!  A. Ralph Louis will deliver a customization process for men who have <span>"A Passion for Elegance"</span>.
+                                    </p>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+                    <div class="clear">
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+            	<div class="footer-inner">
+                	<div class="footer-left">
+                    	<div class="social-icon">
+                    	<a href="#"><img src="images/facebook.jpg" alt="" /></a>
+                        <a href="#"><img src="images/tweets.jpg" alt="" /></a>
+                        <a href="#"><img src="images/rss.jpg" alt="" /></a>
+                        </div>
+                        <div class="contacts">
+                        <span><a href="#"><img src="images/telephone.png" alt="" /> 8503085457</a></span>
+                        <span><a href="mailto:"><img src="images/email.png" alt="" />Email Us</a></span>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="footer-right">
+                    	<div class="footer-menu">
+                        	<ul>
+                            	<li><a href="#">Measurement Form </a></li>
+                                <li><a href="#">Client Services </a></li>
+                                <li><a href="#"> Terms & Conditions </a></li>
+                                <li><a href="#"> Privacy Policy </a></li>
+                                <li><a href="#"> Shipping </a></li>
+                                <li><a href="#"> Refund Policy </a></li> 
+                                <li><a href="#"> Client Investors </a></li> 
+                                <li class="bg-none"><a href="#" > Careers  </a></li>
+                            </ul>
+                            <div class="clear"></div>
+                        </div>
+                        <div class="copyright">
+                        	<p>Copyright &copy;  2012 A. Ralph Louis. All Rights Reserved.</p>
+                        </div>
+                    </div>
+                    <div class="clear">
+                    </div>
+                </div>
+            </div>
+         
+    </div>
+</body>
+</html>
